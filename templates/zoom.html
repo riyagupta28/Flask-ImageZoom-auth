@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Zoom</title>
+    <style>
+        /* Style for the thumbnail */
+        .thumbnail {
+            width: 100px; /* Adjust the size of the thumbnail */
+            cursor: pointer;
+        }
+
+        /* Style for the zoomed-in image container */
+        .zoom-container {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9); /* Semi-transparent background */
+        }
+
+        /* Style for the zoomed-in image */
+        .zoomed-image {
+            max-width: 90%;
+            max-height: 90%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <!-- Thumbnail of the image -->
+    <img src="{{ url_for('static', filename='uploads/' + filename) }}" class="thumbnail" id="thumbnail" alt="Thumbnail">
+
+    <!-- Container for the zoomed-in image -->
+    <div class="zoom-container" id="zoom-container">
+        <img src="{{ url_for('static', filename='uploads/' + filename) }}" class="zoomed-image" alt="Zoomed Image">
+    </div>
+
+    <script>
+        // JavaScript to handle zoom functionality
+        const thumbnail = document.getElementById('thumbnail');
+        const zoomContainer = document.getElementById('zoom-container');
+
+        thumbnail.addEventListener('mouseover', () => {
+            zoomContainer.style.display = 'block';
+        });
+
+        thumbnail.addEventListener('mouseout', () => {
+            zoomContainer.style.display = 'none';
+        });
+
+        thumbnail.addEventListener('mousemove', (e) => {
+            const zoomedImage = zoomContainer.querySelector('.zoomed-image');
+            const xOffset = e.clientX - thumbnail.getBoundingClientRect().left;
+            const yOffset = e.clientY - thumbnail.getBoundingClientRect().top;
+
+            const imageWidth = thumbnail.width;
+            const imageHeight = thumbnail.height;
+            
+            const xPercentage = (xOffset / imageWidth) * 100;
+            const yPercentage = (yOffset / imageHeight) * 100;
+
+            zoomedImage.style.transformOrigin = `${xPercentage}% ${yPercentage}%`;
+        });
+    </script>
+</body>
+</html>
